@@ -1,11 +1,4 @@
-"""Tools the AI can call.
 
-The AI never sees raw tables and never counts by itself: it chooses a tool and arguments,
-the pandas code below computes the exact answer, and the AI only phrases the result.
-
-* Data tools (part 2) return facts.
-* Control tools (part 3) change the dashboard state (store, view, filters, sorting, chart).
-"""
 import ast
 import json
 import operator
@@ -20,9 +13,6 @@ VIEWS = ["Overview", "Revenue", "Books", "Users", "Orders"]
 MAX_ROWS = 50
 
 
-# ---------------------------------------------------------------------------
-# Analysis-friendly tables (one row per order / user record / book)
-# ---------------------------------------------------------------------------
 def _authors_text(author_set):
     return ", ".join(sorted(author_set))
 
@@ -84,9 +74,6 @@ COLUMNS = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Structured filters, shared by data tools and by the dashboard
-# ---------------------------------------------------------------------------
 FILTER_OPS = ["eq", "ne", "gt", "gte", "lt", "lte", "contains", "startswith", "endswith",
               "regex", "in", "between", "isnull", "notnull"]
 
@@ -152,9 +139,7 @@ def apply_filters(df, filters):
     return df[m]
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+
 def _store(store):
     s = str(store).strip().upper().replace(" ", "")
     if s.isdigit():
@@ -201,10 +186,6 @@ def _person_block(store, person_id):
         "last_order": orders["date"].max() if len(orders) else None,
     }
 
-
-# ---------------------------------------------------------------------------
-# Data tools (part 2)
-# ---------------------------------------------------------------------------
 def store_summary(store):
     """The dashboard answers for one store."""
     from analysis import solve
@@ -233,7 +214,7 @@ def store_summary(store):
 
 def query(store, table, filters=None, group_by=None, metric="count", metric_column=None,
           sort="desc", limit=10, columns=None):
-    """Generic exact query: filter, then count/aggregate (optionally per group) or list rows."""
+
     df = apply_filters(_table(store, table), filters)
     limit = max(1, min(int(limit or 10), MAX_ROWS))
     metric = metric or "count"
@@ -292,7 +273,7 @@ def query(store, table, filters=None, group_by=None, metric="count", metric_colu
 
 
 def find_person(store, user_id=None, name=None, email=None, phone=None):
-    """Look up a user (any alias) and return the real person with all ids, spending and orders."""
+
     store = _store(store)
     users = get_tables(store)["users"]
     m = pd.Series(True, index=users.index)
@@ -317,7 +298,7 @@ def find_person(store, user_id=None, name=None, email=None, phone=None):
 
 
 def top_customers(store, n=5):
-    """Real persons (aliases merged) ranked by total spending."""
+
     store = _store(store)
     orders = get_tables(store)["orders"]
     spend = orders.groupby("person_id")["paid_price"].sum().sort_values(ascending=False)
@@ -331,7 +312,7 @@ def top_customers(store, n=5):
 
 
 def author_stats(store, author):
-    """Books, copies sold and revenue of every author whose name contains `author`."""
+
     store = _store(store)
     t = get_tables(store)
     books, orders = t["books"], t["orders"]
@@ -354,7 +335,7 @@ def author_stats(store, author):
 
 
 def list_values(store, table, column, filters=None, limit=1000):
-    """Distinct values of one column (for decisions that need world knowledge, e.g. names in titles)."""
+
     df = apply_filters(_table(store, table), filters)
     if column not in df.columns:
         raise ValueError(f"unknown column '{column}'. Available: {', '.join(df.columns)}")
@@ -368,7 +349,7 @@ _OPS = {ast.Add: operator.add, ast.Sub: operator.sub, ast.Mult: operator.mul,
 
 
 def calculate(expression):
-    """Safe arithmetic on numbers returned by other tools (the model must not do math itself)."""
+
     def ev(node):
         if isinstance(node, ast.Expression):
             return ev(node.body)
@@ -385,9 +366,7 @@ def calculate(expression):
     return {"expression": expression, "result": round(value, 6)}
 
 
-# ---------------------------------------------------------------------------
-# Control tools (part 3): they change `state`, the dashboard redraws from it
-# ---------------------------------------------------------------------------
+
 def default_state():
     return {
         "store": "STORE1",
@@ -461,7 +440,7 @@ def reset_dashboard(state, confirm=True):
 
 
 def table_view(state, table):
-    """What the dashboard shows for a table: current store, filters and sort applied."""
+
     df = apply_filters(_table(state["store"], table), state["filters"][table])
     srt = state["sort"][table]
     if srt:
@@ -469,9 +448,7 @@ def table_view(state, table):
     return df
 
 
-# ---------------------------------------------------------------------------
-# Tool descriptions for the model (JSON schema)
-# ---------------------------------------------------------------------------
+
 _STORE = {"type": "string", "description": f"One of {', '.join(STORES)} (or ALL for every store together where allowed)."}
 _TABLE = {"type": "string", "enum": TABLES}
 _FILTERS = {
@@ -606,7 +583,7 @@ CONTROL_TOOLS = {
 
 
 def tool_specs():
-    """Provider-neutral tool list: name, description, JSON schema."""
+
     specs = []
     for name, t in {**DATA_TOOLS, **CONTROL_TOOLS}.items():
         specs.append({
@@ -618,7 +595,7 @@ def tool_specs():
 
 
 def run_tool(name, args, state):
-    """Execute one tool call. Errors are returned to the model so it can correct itself."""
+
     try:
         if name in DATA_TOOLS:
             result = DATA_TOOLS[name]["fn"](**args)

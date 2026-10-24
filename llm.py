@@ -1,14 +1,4 @@
-"""Chat loop: the model picks tools, Python runs them, the model phrases the exact results.
 
-Default: Google Gemini (free tier) through its OpenAI-compatible endpoint.
-Also works with the Anthropic API (Claude) or any other OpenAI-compatible API.
-Configuration comes from Streamlit secrets or environment variables:
-
-    LLM_PROVIDER = "gemini"               # or "anthropic" / "openai"
-    LLM_API_KEY  = "..."                  # for Gemini: a key from https://aistudio.google.com/apikey
-    LLM_MODEL    = "gemini-3.8-flash"     # optional for gemini/anthropic, required for "openai"
-    LLM_BASE_URL = "https://..."          # only for other OpenAI-compatible providers
-"""
 import json
 import os
 import time
@@ -100,11 +90,7 @@ def _short(result, n=1500):
 
 
 def chat(question, history, state, config, client=None):
-    """Answer one question. Returns (answer_text, trace); `state` may be changed by control tools.
 
-    history: previous turns as [{"role": "user"|"assistant", "content": str}].
-    client:  optional pre-built SDK client (used by tests).
-    """
     if not config.get("api_key") and client is None:
         return ("The AI assistant is not configured: add LLM_API_KEY (and LLM_PROVIDER / LLM_MODEL) "
                 "to the app's secrets."), []

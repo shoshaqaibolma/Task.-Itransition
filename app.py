@@ -39,7 +39,7 @@ config = load_config(st.secrets)
 with st.sidebar:
     st.header("💬 Ask the data")
     if config.get("api_key"):
-        st.caption(f"Model: {config['model']} · answers come from exact pandas tools, not from the model's memory")
+        st.caption(f"Model: {config['model']} ")
     else:
         st.warning("AI is not configured. Add LLM_API_KEY (a free Gemini key) to the app secrets.")
 
