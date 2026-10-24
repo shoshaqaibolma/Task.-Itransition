@@ -3,4 +3,4 @@ pyarrow
 pyyaml
 python-dateutil
 streamlit
-plotly
+matplotlib
