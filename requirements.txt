@@ -2,6 +2,8 @@ pandas
 pyarrow
 pyyaml
 python-dateutil
-streamlit
-matplotlib
+streamlit>=1.66
 plotly
+matplotlib
+anthropic
+openai
