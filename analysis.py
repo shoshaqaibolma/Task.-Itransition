@@ -4,17 +4,17 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import yaml
 from dateutil import parser
-stores = [r"\STORE1", r"\STORE2", r"\STORE3", r"\STORE4", r"STORE5"]
+stores = ["STORE1", "STORE2", "STORE3", "STORE4", r"STORE5"]
 
 def load(store):
 
-     us = pd.read_csv(store + r"\users.csv", dtype=str, keep_default_na=False)
+     us = pd.read_csv(store + "/users.csv", dtype=str, keep_default_na=False)
 
      us["id"] = us["id"].astype(int)
 
-     orr = pd.read_parquet(store + r"\orders.parquet")
+     orr = pd.read_parquet(store + "/orders.parquet")
 
-     with open(store + r"\books.yaml", encoding="utf-8") as f:
+     with open(store + "/books.yaml", encoding="utf-8") as f:
 
           bo = pd.DataFrame(yaml.safe_load(f))
 
