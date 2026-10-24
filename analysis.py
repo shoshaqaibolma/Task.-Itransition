@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import yaml
 from dateutil import parser
-stores = [r"D:\download\data\STORE1", r"D:\download\data\STORE2", r"D:\download\data\STORE3", r"D:\download\data\STORE4", r"D:\download\data\STORE5"]
+stores = [r"\STORE1", r"\STORE2", r"\STORE3", r"\STORE4", r"STORE5"]
 
 def load(store):
 
