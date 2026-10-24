@@ -41,7 +41,7 @@ with st.sidebar:
     if config.get("api_key"):
         st.caption(f"Model: {config['model']} · answers come from exact pandas tools, not from the model's memory")
     else:
-        st.warning("AI is not configured. Add LLM_API_KEY to the app secrets.")
+        st.warning("AI is not configured. Add LLM_API_KEY (a free Gemini key) to the app secrets.")
 
     history_box = st.container(height=520, border=False)   # input stays visible below a scrolling history
     question = st.chat_input("Ask a question or give a command…")
@@ -162,7 +162,7 @@ for name in TABLES:
                 st.rerun()
         for f in active:
             neg = "NOT " if f.get("negate") else ""
-            val = f.get("value")
+            val = f.get("values") or f.get("value")
             if isinstance(val, list) and len(val) > 8:
                 val = f"{val[:8]} … ({len(val)} values)"
             st.caption(f"🔎 {neg}`{f['column']}` {f['op']} `{val if val is not None else ''}`")
