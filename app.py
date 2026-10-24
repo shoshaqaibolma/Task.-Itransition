@@ -3,7 +3,7 @@ import streamlit as st
 
 from analysis import solve
 
-st.set_page_config(page_title="Bookstore Analytics", page_icon="📚", layout="wide")
+st.set_page_config(page_title="Bookstore Analytics", layout="wide")
 
 STORES = ["STORE1", "STORE2", "STORE3", "STORE4", "STORE5"]
 

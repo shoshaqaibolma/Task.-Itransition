@@ -205,20 +205,20 @@ def solve(store):
   
 
      return {
+        "top5_days": [d.strftime("%Y-%m-%d") for d in daily.nlargest(5).index],
+        "top5_revenue": daily.nlargest(5).tolist(),
+        "unique_users": us["person"].nunique(),
+        "author_sets": bo["author_set"].nunique(),
+        "top_authors": sorted(sold.idxmax()),
+        "top_authors_sold": int(sold.max()),
+        "best_buyer_ids": sorted(us.loc[us["person"] == top, "id"].tolist()),
+        "best_buyer_spend": round(spend.max(), 2),
+        "total_revenue": round(orr["paid_price"].sum(), 2),
+        "orders": len(orr),
+        "daily": daily,
+    }
 
-          "top5_days": [d.strftime("%Y-%m-%d") for d in daily.nlargest(5).index],
-
-          "unique_users": us["person"].nunique(),
-
-          "author_sets": bo["author_set"].nunique(),
-
-          "top_authors": sorted(sold.idxmax()),
-
-          "best_buyer_ids": sorted(us.loc[us["person"] == top, "id"].tolist()),
-
-          "daily": daily,
-
-     }
+    
 
   
   
