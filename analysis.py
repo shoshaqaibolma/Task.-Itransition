@@ -25,7 +25,6 @@ def load(store):
   
   
 
-S1_us, S1_or, S1_bo = load(r"\STORE1")
 
 
 def price_to_usd(prices):
@@ -55,11 +54,6 @@ def price_to_usd(prices):
   
   
 
-S1_or["price_in_usd"] = price_to_usd(S1_or["unit_price"])
-
-S1_or["paid_price"] = (S1_or["quantity"] * S1_or["price_in_usd"]).round(2)
-
-  
 
 
 
@@ -87,18 +81,6 @@ def parse_time(stamps):
   
   
 
-S1_or["ts"] = parse_time(S1_or["timestamp"])
-
-S1_or["date"] = S1_or["ts"].dt.normalize()
-
-S1_or["year"] = S1_or["ts"].dt.year
-
-S1_or["month"] = S1_or["ts"].dt.month
-
-S1_or["day"] = S1_or["ts"].dt.day
-
-  
-
 
 def clean_orders(orr):
 
@@ -111,8 +93,6 @@ def clean_orders(orr):
      return orr
      
 
-S1_or = clean_orders(S1_or)
-
 
 
 def daily_rev(orr):
@@ -120,11 +100,7 @@ def daily_rev(orr):
      daily = daily.asfreq("D", fill_value=0)     
      return daily.round(2)  
 
-daily_revenue = daily_rev(S1_or)
-top5 = daily_revenue.nlargest(5)
-print(top5)
-print(daily_revenue.tail(5))
-print("check:", round(daily_revenue.sum(), 2), round(S1_or["paid_price"].sum(), 2))
+
 
 def clean_users(us):
 
@@ -170,11 +146,7 @@ def find_persons(us):
   
   
 
-S1_us = find_persons(clean_users(S1_us))
 
-print("real users:", S1_us["person"].nunique())
-
-print(S1_us["person"].value_counts().value_counts().sort_index())
 
 def author_sets(bo):
 
@@ -191,33 +163,6 @@ def author_sets(bo):
      return bo
 
   
-  
-
-S1_bo = author_sets(S1_bo)
-
-print("unique author sets:", S1_bo["author_set"].nunique())
-
-  
-
-S1_or["author_set"] = S1_or["book_id"].map(S1_bo.set_index("id")["author_set"])
-
-sold = S1_or.groupby("author_set")["quantity"].sum()
-
-print("most popular:", sorted(sold.idxmax()), "-", sold.max(), "books")
-
-S1_or["person"] = S1_or["user_id"].map(S1_us.set_index("id")["person"])
-
-print("unmatched orders:", S1_or["person"].isna().sum())
-
-  
-
-spend = S1_or.groupby("person")["paid_price"].sum()
-
-top = spend.idxmax()
-
-print("top customer ids:", sorted(S1_us.loc[S1_us["person"] == top, "id"]), "-", round(spend.max(), 2), "$")
-
-print(S1_us[S1_us["person"] == top])
 
 def solve(store):
 
