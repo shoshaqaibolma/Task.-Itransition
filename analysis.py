@@ -25,7 +25,7 @@ def load(store):
   
   
 
-S1_us, S1_or, S1_bo = load(r"D:\download\data\STORE1")
+S1_us, S1_or, S1_bo = load(r"\STORE1")
 
 
 def price_to_usd(prices):
