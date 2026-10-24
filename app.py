@@ -13,7 +13,7 @@ def get_results(store):
     return solve(store)
 
 
-st.title("📚 Bookstore Analytics")
+st.title(" Bookstore Analytics")
 st.caption("Task 4 · daily revenue, real users, author sets and best buyers for each store")
 
 tabs = st.tabs(STORES)
@@ -45,7 +45,6 @@ for tab, store in zip(tabs, STORES):
             st.code(str(r["best_buyer_ids"]), language=None)
             st.caption(f"${r['best_buyer_spend']:,.2f} spent · ids of the same person (aliases)")
 
-        # --- chart ---
         st.subheader("Daily revenue")
         df = r["daily"].rename("Revenue").reset_index()
         fig = px.line(df, x="date", y="Revenue", labels={"date": "", "Revenue": "USD"})
@@ -53,7 +52,6 @@ for tab, store in zip(tabs, STORES):
         fig.update_layout(height=350, margin=dict(l=0, r=0, t=10, b=0))
         st.plotly_chart(fig, width="stretch", key="chart_" + store)
 
-# --- chat area (for parts 2 and 3) ---
 st.divider()
 st.subheader("💬 Chat")
 
